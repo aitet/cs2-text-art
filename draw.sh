@@ -14,6 +14,12 @@ mkdir -p "$path" || exit 1
 
 text=$(figlet -k "$@" | sed 's/ /./g')
 
+if [ -z "$1" ] || [ "$1" = "-" ] ; then
+	text="$(cat /dev/stdin)"
+	[ -z "$text" ] && exit 255
+else
+    text=$(figlet -k "$@" | sed 's/ /./g')
+fi
 
 printf '%s\n' "$text" | while read -r line; do
 	i=$((i+1))
