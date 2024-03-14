@@ -14,7 +14,7 @@ if [ -z "$1" ] || [ "$1" = "-" ] ; then
 	text="$(cat /dev/stdin)"
 	[ -z "$text" ] && exit 255
 else
-    text=$(figlet -k "$@" | sed 's/ /./g')
+	text=$(toilet -f smbraille -F crop "$@" )
 fi
 
 printf '%s\n' "$text" | while read -r line; do
