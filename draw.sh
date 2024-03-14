@@ -20,7 +20,6 @@ fi
 printf '%s\n' "$text" | while read -r line; do
 	i=$((i+1))
 	file="$path/$i.cfg"
-	echo "say $line" > "$file" &
-	echo "bind p exec art/$((i+1))" >> "$file" &
-	echo "bind o exec art/1" >> "$file" &
+	echo "say \"$line\"" >> "$file"
+	echo "bind - exec art/$((i+1))" >> "$file"
 done
