@@ -10,10 +10,6 @@ fi
 mkdir -p "$path" || exit 1
 [ -f "$path/1.cfg" ] && rm "$path"/*.cfg
 
-[ -z "$1" ] && echo "Empty input. Do '$0 git gud'" && exit 1
-
-text=$(figlet -k "$@" | sed 's/ /./g')
-
 if [ -z "$1" ] || [ "$1" = "-" ] ; then
 	text="$(cat /dev/stdin)"
 	[ -z "$text" ] && exit 255
