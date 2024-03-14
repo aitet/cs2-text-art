@@ -1,64 +1,24 @@
-#!/bin/bash
+#!/bin/sh
+cs="steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg/art"
 
-
-cs="$HOME/.local/share/Steam/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg" #edit this if needed
-folder_name="art"
-full_path="$cs/$folder_name"
-
-text="$*"
-
-final_text=$(figlet -k "$text")
-
-if [ $# -eq 0 ]; then
-echo Paste your draw: 
-   while IFS= read -r line && [ -n "$line" ]; do
-        final_text+="$line"$'\n'
-    done
+if [ -d "$HOME/.steam" ]; then
+	path="$HOME/.steaml/root/$cs"
+else
+	path="${XDG_DATA_HOME:-$HOME/.local/share}/Steam/$cs"
 fi
 
+mkdir -p "$path" || exit 1
+[ -f "$path/1.cfg" ] && rm "$path"/*.cfg
+
+[ -z "$1" ] && echo "Empty input. Do '$0 git gud'" && exit 1
+
+text=$(figlet -k "$@" | sed 's/ /./g')
 
 
-text_no_spaces="${final_text// /$(echo -ne '.')}"
-
-IFS=$'\n' read -rd '' -a lines <<< "$text_no_spaces"
-
-
-mkdir -p "$full_path"
-
-
-for i in "${!lines[@]}"; do
-  echo "say ${lines[$i]}
-  bind p exec $folder_name/output_$((i+2))
-  bind o exec $folder_name/output_1
-  " > "$full_path/output_$((i+1)).cfg"
+printf '%s\n' "$text" | while read -r line; do
+	i=$((i+1))
+	file="$path/$i.cfg"
+	echo "say $line" > "$file" &
+	echo "bind p exec art/$((i+1))" >> "$file" &
+	echo "bind o exec art/1" >> "$file" &
 done
-
-echo "
-######################################
-#\"$full_path\" successfully created!#
-######################################
-┌────────────────────────────────────┐
-│    Please help keep this project   │
-│             alive:                 │
-│                                    │
-├────────────────────────────────────┤
-│    Monero:   46Mk8t9uLY7jnBXnyHM   │
-│              yVARvwk1Y7jcGEQwKLN8  │
-│              GtGGBioncjKLgkEa33jE  │
-│              N2ibgkQjoFZWVwXXwsM3  │
-│              vzAFz4RzV7psLow6      │
-│                                    │
-├────────────────────────────────────┤
-│    Bitcoin:  bc1qgxp74eza7jaf4fdw  │
-│              5cl3sanqvnh0cjmz0w9scz│
-│                                    │
-├────────────────────────────────────┤
-│    Ethereum: 0xa024a505Ec24c7eA16  │
-│               3985eC89D56e614B9AdAa│
-│               e                    │
-│                                    │
-├────────────────────────────────────┤
-│    PayPal:   paypal.me/moioyoyo    │
-└────────────────────────────────────┘
-  moioyoyo76@gmail.com
-"
